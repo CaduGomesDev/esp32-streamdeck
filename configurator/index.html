@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ESP32-S3 Stream Deck — Configurador</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<header>
+  <h1>ESP32-S3 Stream Deck</h1>
+  <div id="connection">
+    <button id="connectBtn">Conectar</button>
+    <span id="status" class="status">desconectado</span>
+  </div>
+</header>
+
+<main>
+  <div id="unsupported" class="banner hidden">
+    Este navegador não suporta <strong>Web Serial</strong>. Use Chrome ou Edge
+    (desktop) para conectar com o dispositivo.
+  </div>
+
+  <section>
+    <h2>Botões</h2>
+    <div id="rows"></div>
+    <button id="addRowBtn">+ Adicionar botão</button>
+
+    <div class="field">
+      <label for="idleSeconds">Tempo até a tela de descanso (s)</label>
+      <input type="number" id="idleSeconds" min="5" max="3600" value="30" />
+    </div>
+    <div class="field">
+      <label for="boxOpacity">Opacidade das caixas (com fundo)</label>
+      <input type="range" id="boxOpacity" min="10" max="100" step="5" value="70" />
+      <span id="boxOpacityValue" class="muted">70%</span>
+    </div>
+
+    <div class="actions">
+      <button id="loadConfigBtn">Carregar do dispositivo</button>
+      <button id="saveConfigBtn" class="primary">Salvar no dispositivo</button>
+    </div>
+  </section>
+
+  <section>
+    <h2>Tela de descanso (GIF)</h2>
+    <input type="file" id="gifInput" accept=".gif,image/gif" />
+    <div id="gifInfo" class="muted">nenhum arquivo selecionado</div>
+    <div class="actions">
+      <button id="sendGifBtn" class="primary">Enviar</button>
+      <button id="deleteGifBtn">Remover tela de descanso</button>
+    </div>
+    <progress id="gifProgress" value="0" max="100"></progress>
+  </section>
+
+  <section>
+    <h2>Imagem de fundo da grade</h2>
+    <div class="muted">
+      Qualquer imagem (JPG/PNG): é recortada para 480×320 e fica atrás dos
+      botões. Ajuste a opacidade das caixas na seção Botões e clique em
+      "Salvar no dispositivo".
+    </div>
+    <input type="file" id="bgInput" accept="image/*" />
+    <img id="bgPreview" class="bg-preview hidden" width="240" height="160" alt="prévia do fundo" />
+    <div class="actions">
+      <button id="sendBgBtn" class="primary">Enviar fundo</button>
+      <button id="deleteBgBtn">Remover fundo</button>
+    </div>
+    <progress id="bgProgress" value="0" max="100"></progress>
+  </section>
+
+  <section>
+    <button id="rebootBtn">Reiniciar dispositivo</button>
+  </section>
+
+  <section>
+    <h2>Log</h2>
+    <pre id="log"></pre>
+  </section>
+</main>
+
+<template id="rowTemplate">
+  <div class="card">
+    <div class="card-top">
+      <input type="text" class="label" maxlength="15" placeholder="Rótulo" />
+      <input type="color" class="color" value="#3366cc" />
+      <button class="remove">Remover</button>
+    </div>
+
+    <div class="card-field">
+      <label>Ação</label>
+      <select class="type">
+        <option value="key">Tecla (F13-F24)</option>
+        <option value="macro">Macro (digitar texto / abrir site)</option>
+        <option value="volume_up">Volume: aumentar</option>
+        <option value="volume_down">Volume: diminuir</option>
+        <option value="volume_mute">Volume: mudo</option>
+        <option value="status">Status dos servidores (via PC)</option>
+        <option value="screensaver">Voltar para a tela de descanso</option>
+        <option value="notifications">Notificacoes do Windows</option>
+        <option value="usage">Uso do Claude (via PC)</option>
+      </select>
+    </div>
+
+    <div class="card-field type-key">
+      <label>Tecla</label>
+      <select class="key"></select>
+    </div>
+
+    <div class="type-macro">
+      <div class="card-field">
+        <label>Texto a digitar</label>
+        <input type="text" class="macro-text" maxlength="63" placeholder="ex: /status  ou  https://discord.com/app" />
+      </div>
+      <div class="card-field checkboxes">
+        <label><input type="checkbox" class="macro-winr" /> Abrir com Win+R antes</label>
+        <label><input type="checkbox" class="macro-enter" /> Pressionar Enter no final</label>
+      </div>
+    </div>
+
+    <div class="card-field icon-field">
+      <label>Ícone</label>
+      <input type="file" class="icon-input" accept="image/*" />
+      <img class="icon-preview hidden" width="32" height="32" />
+      <span class="icon-status muted"></span>
+      <button class="icon-remove">Remover ícone</button>
+    </div>
+  </div>
+</template>
+
+<script src="app.js"></script>
+</body>
+</html>
